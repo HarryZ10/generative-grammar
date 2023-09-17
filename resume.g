@@ -1,5 +1,7 @@
+Resume Bullet Points for CS Majors
+by Harry Zhu (hzhu20@georgefox.edu)
 {
-Creating something for a resume bullet point
+<start>
 <action> <result> for <reason> by leveraging <skills_list> and <skills_list> <conjunction> <impact> <quantifier> ;
 }
 
