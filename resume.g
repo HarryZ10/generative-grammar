@@ -2,7 +2,7 @@ Resume Bullet Points for CS Majors
 by Harry Zhu (hzhu20@georgefox.edu)
 {
 <start>
-<action> <result> for <reason> by leveraging <skills_list> and <skills_list> <conjunction> <impact> <quantifier> ;
+<action> <result> for <reason> <using> <skills_list> and <skills_list> <conjunction> <impact> <quantifier> ;
 }
 
 {
@@ -11,6 +11,20 @@ resulting in ;
 resulting in ;
 resulting in ;
 with ;
+}
+
+{
+<using>
+by leveraging ;
+by using ;
+by utilizing ;
+by employing ;
+through ;
+with the aid of ;
+making use of ;
+capitalizing on ;
+by exploiting ;
+by harnessing ;
 }
 
 {
