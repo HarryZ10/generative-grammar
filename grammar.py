@@ -70,9 +70,6 @@ class RandomTextGenerator:
 
         return ' '.join(output)
 
-def main(arg):
-    generator = RandomTextGenerator(arg)
-    print(generator.generate_text())
-
 if __name__ == "__main__":
-    main(sys.argv[1])
+    rtg = RandomTextGenerator(sys.argv[1])
+    print(rtg.generate_text())
