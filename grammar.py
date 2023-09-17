@@ -103,24 +103,27 @@ class RandomTextGenerator:
         else:
             return None
 
+    def _minimize_text(self, text: str) -> str:
+        return text.replace(" ,", ",").replace(" .", ".").replace(" :", ":")
+
     def run(self) -> str:
         # initialize stack with entry symbol and output
         stack, res = [self.start_symbol], []
 
         while stack:
             # stack gets consumed to replace all non-terminal symbols
-            curr_symbol = stack.pop()
+            curr_symbol: str = stack.pop()
 
             # if current symbol is non-terinal, replace with a terminal symbol
             if curr_symbol in self.grammar_rules:
                 # replace non-terminal with new randomly selected terminal symbols
-                content = self._get_content(curr_symbol)
+                content: list = self._get_content(curr_symbol)
                 stack.extend(reversed(content))
             else:
                 # only append terminal symbols
                 res.append(curr_symbol)
-        
-        return " ".join(res).replace(" ,", ",")
+
+        return self._minimize_text(" ".join(res))
 
 
 if __name__ == "__main__":
