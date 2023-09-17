@@ -4,72 +4,64 @@ import sys
 class RandomTextGenerator:
 
     def __init__(self, grammar_file):
-
         self.grammar_file: str = grammar_file       # the file path to read from
         self.grammar_rules: dict = {}               # store grammar rules in a map 
         self.start_symbol: str = None               # entry non-terminal symbol
+        self._read_grammar_rules()                  # entrypoint to the program
 
-        self.read_grammar()                         # entrypoint to the program
-
-    def read_grammar(self) -> None:
+    def _read_grammar_rules(self) -> None:
         with open(self.grammar_file, 'r') as file:
             eof: bool = False
             while not eof:
                 line = file.readline()
                 if not line:
-                    eof = True  # stop processig productions
+                    # stop processing productions
+                    eof = True
                 else:
-                    line = line.strip() # continue processing production without whitespace
+                    # process productions without whitespace
+                    line = line.strip()
 
-                    # production set starts with a "{"
+                    # a production set starts with a "{"
                     if line.startswith("{"):
-
-                        non_terminal: str = file.readline().strip() # non-terminal is on the next line
-
                         # initialize start symbol to the current non-terminal
+                        # non-terminal is on the next line
+                        non_terminal: str = file.readline().strip()
+
                         if self.start_symbol is None:
                             self.start_symbol = non_terminal
 
-                        productions: list = []
-
-                        # read the productions until "}" is found
+                        # collect all productions consuming the rest of the lines until "}" is found
+                        productions: list = [] 
                         while not (line := file.readline().strip()).startswith("}"):
-
-                            if line.endswith(";"):
-                                line = line[:-1] # removes trailing semicolon if it exists
-
-                            productions.append(line) # add line to productions
+                            # add production without ';'
+                            productions.append(line[:-1]) 
 
                         # add the non-terminal and its productions to the grammar rules dict
                         self.grammar_rules[non_terminal] = productions
 
-    def get_random_production(self, non_terminal) -> str:
+    def _get_content(self, non_terminal) -> str:
         productions: list = self.grammar_rules.get(non_terminal, [])
         return random.choice(productions) if productions else None
 
-    def generate_text(self) -> str:
+    def run(self) -> str:
         # initialize stack with entry symbol and output
-        stack, output = [self.start_symbol], []
+        stack, res = [self.start_symbol], []
 
         while stack:
-            # pop the last element to get a current symbol
-            current_symbol = stack.pop()
+            # stack gets consumed to replace all non-terminal symbols
+            curr_symbol = stack.pop()
 
-            # now we check if it's in our dictionary of rules
-            if current_symbol in self.grammar_rules:
-
-                # get a random production (or terminal symbol) and maintain in-stack order
-                production = self.get_random_production(current_symbol)
-                production_symbols = production.split()[::-1]
-
-                # Push each symbol from the production to replace non-terminals
-                stack.extend(production_symbols)
+            # if current symbol is non-terinal, replace with a terminal symbol
+            if curr_symbol in self.grammar_rules:
+                # replace non-terminal with new randomly selected terminal symbols
+                content = self._get_content(curr_symbol)
+                stack.extend(content.split()[::-1]) 
             else:
-                # if the current symbol is a terminal
-                output.append(current_symbol)
+                # only append terminal symbols
+                res.append(curr_symbol)
 
-        return ' '.join(output)
+        return " ".join(res)
 
 if __name__ == "__main__":
     rtg = RandomTextGenerator(sys.argv[1])
-    print(rtg.generate_text())
+    print(rtg.run())
