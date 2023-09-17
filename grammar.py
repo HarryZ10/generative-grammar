@@ -29,15 +29,15 @@ class RandomTextGenerator:
 
                         # initialize start symbol to the current non-terminal
                         # non-terminal is on the next line
-                        non_terminal = self._init_start_symbol(file)
+                        non_terminal: str = self._init_start_symbol(file)
 
                         # collect all productions consuming the rest of the lines until "}" is found
-                        productions = self._consume_set_of_productions(file) 
+                        productions: list = self._consume_set_of_productions(file) 
 
                         # add the non-terminal and its productions to the grammar rules dict
                         self.grammar_rules[non_terminal] = productions
 
-    def _init_start_symbol(self, file):
+    def _init_start_symbol(self, file) -> str:
         non_terminal: str = file.readline().strip()
         if self.start_symbol is None:
             # set the start symbol to init
@@ -49,21 +49,14 @@ class RandomTextGenerator:
     def _consume_set_of_productions(self, file) -> list:
         productions: list = [] 
         while not (line := file.readline().strip()).startswith("}"):
-            # add production symbols without ';'
-            if line.endswith(";"):
-                productions.append(line[:-1])
-            else:
-                productions.append(line)
-
+            productions.append(line[:-1]) if line.endswith(";") else productions.append(line)
         return productions
 
     def _get_content(self, non_terminal) -> list:
         # retrieve the list of production rules associated with the given non-terminal symbol
         productions: list = self.grammar_rules.get(non_terminal, [])
         if productions:
-            production = random.choice(productions)
-            symbols = []
-            symbol = ""
+            production, symbols, symbol = random.choice(productions), [], ""
 
             for char in production:
                 # "<" starting character for non-terminal symbol
