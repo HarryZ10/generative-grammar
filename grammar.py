@@ -5,7 +5,7 @@ class RandomTextGenerator:
 
     def __init__(self, grammar_file):
 
-        self.grammar_file = grammar_file            # the file to read from
+        self.grammar_file: str = grammar_file       # the file path to read from
         self.grammar_rules: dict = {}               # store grammar rules in a map 
         self.start_symbol: str = None               # entry non-terminal symbol
 
