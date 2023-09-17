@@ -8,6 +8,8 @@ by Harry Zhu (hzhu20@georgefox.edu)
 {
 <conjunction>
 resulting in ;
+resulting in ;
+resulting in ;
 with ;
 }
 
