@@ -104,7 +104,10 @@ class RandomTextGenerator:
             return None
 
     def _minimize_text(self, text: str) -> str:
-        return text.replace(" ,", ",").replace(" .", ".").replace(" :", ":")
+        return text.replace(" ,", ",") \
+                   .replace(" .", ".") \
+                   .replace(" :", ":") \
+                   .replace(" \\n ", "\n")
 
     def run(self) -> str:
         # initialize stack with entry symbol and output
