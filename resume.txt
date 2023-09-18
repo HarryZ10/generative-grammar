@@ -3,6 +3,8 @@ by Harry Zhu (hzhu20@georgefox.edu)
 {
 <start>
 <action> <result> for <reason> <using> <skills_list> and <skills_list> <conjunction> <impact> <quantifier> ;
+<action> <result> <using> <skills_list> and <skills_list> for <reason> <conjunction> <impact> <quantifier> ;
+<action> <result> <using> <skills_list> for <reason> <conjunction> <impact> <quantifier> ;
 }
 
 {
