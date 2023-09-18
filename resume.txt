@@ -1,5 +1,7 @@
 Resume Bullet Points for CS Majors
-by Harry Zhu (hzhu20@georgefox.edu)
+by Harry Zhu (harryzhu45@gmail.com)
+
+---
 
 * you're job hunting, i got u; it's hard out here
 * software engineering is not just about programming cool things,
@@ -8,6 +10,8 @@ by Harry Zhu (hzhu20@georgefox.edu)
 
 * so, i hope u like using this tool to help you learn how to create
 * an effective resume bullet point.
+
+---
 
 {
 <start>
