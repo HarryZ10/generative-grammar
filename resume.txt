@@ -2,7 +2,17 @@ Resume Bullet Points for CS Majors
 by Harry Zhu (hzhu20@georgefox.edu)
 {
 <start>
-<action> <result> for <reason> <using> <skills_list> and <skills_list> <conjunction> <impact> <quantifier> ;
+<bullet> ;
+}
+
+{
+<bullet>
+<action> <result> for <reason> <using> <skills_list> and <skills_list> <conjunction> <impact> <quantifier> \n <bullet> ;
+<action> <result> for <reason> <using> <skills_list> and <skills_list> <conjunction> <impact> <quantifier> \n <bullet> ;
+<action> <result> for <reason> <using> <skills_list> and <skills_list> <conjunction> <impact> <quantifier> \n <bullet> ;
+<action> <result> <using> <skills_list> and <skills_list> for <reason> <conjunction> <impact> <quantifier> ;
+<action> <result> <using> <skills_list> and <skills_list> for <reason> <conjunction> <impact> <quantifier> ;
+<action> <result> <using> <skills_list> and <skills_list> for <reason> <conjunction> <impact> <quantifier> ;
 <action> <result> <using> <skills_list> and <skills_list> for <reason> <conjunction> <impact> <quantifier> ;
 <action> <result> <using> <skills_list> for <reason> <conjunction> <impact> <quantifier> ;
 }
@@ -112,10 +122,23 @@ Virtualized ;
 Containerized ;
 Provisioned ;
 Decoupled ;
+Reimaged ;
+Assisted ;
+Reorganized ;
+Queried ;
+Created ;
+Enhancing ;
 }
 
 {
 <result>
+50% of the academic workstations ;
+graphic settings for Smart devices ;
+the process of retiring workstations ;
+the central filing system ;
+vital CRM analytics exported into reports ;
+social media graphics for monthly marketing campaigns ;
+the office's operations manual ;
 a seamless user onboarding process ;
 a robust cybersecurity framework ;
 a dynamic content delivery network ;
@@ -223,6 +246,11 @@ IoT devices ;
 performance optimization ;
 web session validation ;
 large-scale data handling ;
+installing new operating systems ;
+upgrading to newer hardware architectures ;
+retiring outdated client information ;
+streamlining efficient client needs and meetings ;
+improving office standards and efficiency ;
 }
 
 {
@@ -497,10 +525,27 @@ Trello ;
 Slack ;
 Microsoft Teams ;
 Zoom ;
+CRM ;
+Tableau ;
+LaTeX ;
+Microsoft Word ;
+Microsoft Excel ;
+Verilog ;
+FPGA ;
+PLC devices ;
+Service-oriented Architecture ;
+Windows Administration ;
+DNS Servers ;
+DHCP hosting ;
+Web deployment ;
+Web hosting ;
+client-server paradigms ;
+
 }
 
 {
 <impact>
+a boost in office standards and efficiency ;
 a surge in user engagement ;
 a boost in system performance ;
 a fortified security posture ;
