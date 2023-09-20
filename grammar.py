@@ -121,7 +121,7 @@ class RandomTextGenerator:
                 if content:
                     stack.extend(reversed(content))
                 else:
-                    raise TypeError("File corrupted")
+                   print("No productions are found in 1 or more production set.")
             else:
                 # only append terminal symbols
                 res.append(curr_symbol)
