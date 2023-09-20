@@ -64,9 +64,6 @@ class RandomTextGenerator:
                     prod = prod.strip()
                     if prod:
                         productions.append(prod)
-            else:
-                productions.append(line)
-
         return productions
 
     def _get_content(self, non_terminal) -> list:
@@ -121,7 +118,10 @@ class RandomTextGenerator:
             if curr_symbol in self.grammar_rules:
                 # replace non-terminal with new randomly selected terminal symbols
                 content: list = self._get_content(curr_symbol)
-                stack.extend(reversed(content))
+                if content:
+                    stack.extend(reversed(content))
+                else:
+                    raise TypeError("File corrupted")
             else:
                 # only append terminal symbols
                 res.append(curr_symbol)
