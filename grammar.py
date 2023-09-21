@@ -30,7 +30,7 @@ class RandomTextGenerator:
             line = line.strip()
 
             # a new production set starts with a "{"
-            if line.startswith("{"):
+            if line == "{":
 
                 # initialize start symbol to the current non-terminal
                 # non-terminal is on the next line
@@ -42,9 +42,13 @@ class RandomTextGenerator:
                 # add the non-terminal and its productions to the grammar rules dict
                 self.grammar_rules[non_terminal] = productions
 
-            elif line.startswith("}"):
+            elif line == "}":
                 print("Error: Unexpected '}' bracket found outside a production set")
                 sys.exit(1)
+            else:
+                if line.startswith("{"):
+                    print("Error: Opening bracket '{' not formatted.")
+                    sys.exit(1)
 
     def _init_start_symbol(self, file) -> str:
         non_terminal: str = file.readline().strip()
@@ -82,12 +86,16 @@ class RandomTextGenerator:
 
             # once we find the `}` we can just return
             # the found productions
-            elif line.startswith("}"):
+            elif line == "}":
                 return productions
 
-            elif line.endswith("{"):
+            elif line == "{":
                 print("Error: Unexpected '{' found!")
                 sys.exit(1)
+            else:
+                if line.startswith("}"):
+                    print("Error: '}' found but improperly formatted.")
+                    sys.exit(1)
 
         # if we are, it means we did not find a "}" mark
         print("File corrupt EOF: No matching '}' found!  ")
