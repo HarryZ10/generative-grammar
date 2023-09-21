@@ -105,8 +105,6 @@ class RandomTextGenerator:
                 symbols.append(symbol.strip())
 
             return symbols
-        else:
-            return None
 
     def _minimize_text(self, text: str) -> str:
         return text.replace(" ,", ",") \
