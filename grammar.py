@@ -45,7 +45,17 @@ class RandomTextGenerator:
         if self.start_symbol is None:
             # set the start symbol to init
             # trickling down grammar rules later on
-            self.start_symbol = non_terminal
+
+            if non_terminal and non_terminal != '':
+
+                if non_terminal.endswith(">") and non_terminal.startswith("<"):
+                    # set the start symbol to init
+                    # trickling down grammar rules later on
+                    self.start_symbol = non_terminal
+                else:
+                    print("Start symbol improperly formed")
+                    sys.exit(1)
+
         return non_terminal
 
     def _consume_set_of_productions(self, file) -> list:
@@ -62,8 +72,7 @@ class RandomTextGenerator:
                 # and split the line into solo productions
                 multiple_prods = line[:-1].split(";")
                 for prod in multiple_prods:
-                    if prod:
-                        productions.append(prod.strip())
+                    productions.append(prod.strip())
 
             # once we find the `}` we can just return
             # the found productions
@@ -124,7 +133,8 @@ class RandomTextGenerator:
             if curr_symbol in self.grammar_rules:
                 # replace non-terminal with new randomly selected terminal symbols
                 content: list = self._get_content(curr_symbol)
-                if content:
+
+                if content is not None:
                     stack.extend(reversed(content))
                 else:
                    print("No productions found for", curr_symbol)
