@@ -19,31 +19,26 @@ class RandomTextGenerator:
         except UnicodeDecodeError:
             with open(self.grammar_file, 'r', encoding='ISO-8859-1') as file:
                 self._process_file(file)
+        except FileNotFoundError:
+            print("File not found")
+            sys.exit(1)
 
     def _process_file(self, file) -> None:
-            eof: bool = False
-            while not eof:
+        for line in file:
+            # get current line content
+            line = line.strip()
 
-                line = file.readline()
-                if not line:
-                    # stop processing productions
-                    eof = True
-                else:
-                    # get current line content
-                    line = line.strip()
+            # a new production set starts with a "{"
+            if line.startswith("{"):
 
-                    # a new production set starts with a "{"
-                    if line.startswith("{"):
+                # initialize start symbol to the current non-terminal
+                # non-terminal is on the next line
+                non_terminal: str = self._init_start_symbol(file)
+                # collect all productions consuming the rest of the lines until "}" is found
+                productions: list = self._consume_set_of_productions(file) 
 
-                        # initialize start symbol to the current non-terminal
-                        # non-terminal is on the next line
-                        non_terminal: str = self._init_start_symbol(file)
-
-                        # collect all productions consuming the rest of the lines until "}" is found
-                        productions: list = self._consume_set_of_productions(file) 
-
-                        # add the non-terminal and its productions to the grammar rules dict
-                        self.grammar_rules[non_terminal] = productions
+                # add the non-terminal and its productions to the grammar rules dict
+                self.grammar_rules[non_terminal] = productions
 
     def _init_start_symbol(self, file) -> str:
         non_terminal: str = file.readline().strip()
@@ -51,17 +46,33 @@ class RandomTextGenerator:
             # set the start symbol to init
             # trickling down grammar rules later on
             self.start_symbol = non_terminal
-
         return non_terminal
 
     def _consume_set_of_productions(self, file) -> list:
         productions: list = [] 
-        while not (line := file.readline().strip()).startswith("}"):
+
+        # going through each line in the remaining
+        # production set, we strip each line
+        for line in file:
+            line: str = line.strip()
+
+            # a production must end with a ";"
             if line.endswith(";"):
-                # remove the last character (semicolon) and split the line into individual productions
-                for prod in line[:-1].split(";"):
-                    productions.append(prod.strip())
-        return productions
+                # remove the last character (semicolon)
+                # and split the line into solo productions
+                multiple_prods = line[:-1].split(";")
+                for prod in multiple_prods:
+                    if prod:
+                        productions.append(prod.strip())
+
+            # once we find the `}` we can just return
+            # the found productions
+            elif line.startswith("}"):
+                return productions
+
+        # if we are, it means we did not find a "}" mark
+        print("File corrupt EOF: No matching '}' found!  ")
+        sys.exit(1)
 
     def _get_content(self, non_terminal) -> list:
         # retrieve the list of production rules associated with the given non-terminal symbol
@@ -118,7 +129,8 @@ class RandomTextGenerator:
                 if content:
                     stack.extend(reversed(content))
                 else:
-                   print("No productions are found in 1 or more production set.")
+                   print("No productions found for", curr_symbol)
+                   sys.exit(1)
             else:
                 # only append terminal symbols
                 res.append(curr_symbol)
