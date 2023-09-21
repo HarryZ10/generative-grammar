@@ -17,13 +17,14 @@ class RandomTextGenerator:
             with open(self.grammar_file, 'r', encoding='UTF-8') as file:
                 self._process_file(file)
         except UnicodeDecodeError:
-            with open(self.grammar_file, 'r', encoding='ISO-8859-1') as file:
-                self._process_file(file)
+            print("Can not read file encoding. Use default UTF-8.")
+            sys.exit(1)
         except FileNotFoundError:
-            print("File not found")
+            print("File does not exist")
             sys.exit(1)
 
     def _process_file(self, file) -> None:
+
         for line in file:
             # get current line content
             line = line.strip()
@@ -34,11 +35,16 @@ class RandomTextGenerator:
                 # initialize start symbol to the current non-terminal
                 # non-terminal is on the next line
                 non_terminal: str = self._init_start_symbol(file)
+
                 # collect all productions consuming the rest of the lines until "}" is found
                 productions: list = self._consume_set_of_productions(file) 
 
                 # add the non-terminal and its productions to the grammar rules dict
                 self.grammar_rules[non_terminal] = productions
+
+            elif line.startswith("}"):
+                print("Error: Unexpected '}' bracket found outside a production set")
+                sys.exit(1)
 
     def _init_start_symbol(self, file) -> str:
         non_terminal: str = file.readline().strip()
@@ -78,6 +84,10 @@ class RandomTextGenerator:
             # the found productions
             elif line.startswith("}"):
                 return productions
+
+            elif line.endswith("{"):
+                print("Error: Unexpected '{' found!")
+                sys.exit(1)
 
         # if we are, it means we did not find a "}" mark
         print("File corrupt EOF: No matching '}' found!  ")
