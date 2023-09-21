@@ -29,10 +29,10 @@ class RandomTextGenerator:
                     # stop processing productions
                     eof = True
                 else:
-                    # process productions without whitespace
+                    # get current line content
                     line = line.strip()
 
-                    # a production set starts with a "{"
+                    # a new production set starts with a "{"
                     if line.startswith("{"):
 
                         # initialize start symbol to the current non-terminal
@@ -60,10 +60,7 @@ class RandomTextGenerator:
             if line.endswith(";"):
                 # remove the last character (semicolon) and split the line into individual productions
                 for prod in line[:-1].split(";"):
-                    # strip whitespace from the production
-                    prod = prod.strip()
-                    if prod:
-                        productions.append(prod)
+                    productions.append(prod.strip())
         return productions
 
     def _get_content(self, non_terminal) -> list:
