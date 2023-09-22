@@ -37,7 +37,7 @@ class RandomTextGenerator:
             if line == "{":
                 # initialize start symbol to the current non-terminal
                 # non-terminal is on the next line
-                non_terminal: str = self._init_start_symbol(file)
+                non_terminal: str = self._validate_start_symbol(file)
 
                 # collect all productions consuming the rest of the lines until "}" is found
                 productions: List[str] = self._consume_set_of_productions(file)
@@ -53,7 +53,7 @@ class RandomTextGenerator:
                 if line.startswith("{"):
                     raise GrammarFileError("Error: Opening bracket '{' not formatted.")
 
-    def _init_start_symbol(self, file) -> str:
+    def _validate_start_symbol(self, file) -> str:
         non_terminal: str = file.readline().strip()
         if self.start_symbol is None:
             # set the start symbol to init
