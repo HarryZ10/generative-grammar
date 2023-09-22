@@ -36,7 +36,6 @@ class RandomTextGenerator:
             line = line.strip()
 
             if line == "{":
-
                 # initialize start symbol to the current non-terminal
                 # non-terminal is on the next line
                 non_terminal: str = self._init_start_symbol(file)
@@ -49,7 +48,6 @@ class RandomTextGenerator:
                     self.grammar_rules[non_terminal] = productions
                 else:
                     raise GrammarFileError("Start symbol improperly formatted")
-
             elif line == "}":
                 raise GrammarFileError("Error: Unexpected '}' bracket found outside a production set")
             else:
@@ -62,14 +60,10 @@ class RandomTextGenerator:
             # set the start symbol to init
             # trickling down grammar rules later on
             if non_terminal and non_terminal != '':
-
                 if non_terminal.endswith(">") and non_terminal.startswith("<"):
-                    # set the start symbol to init
-                    # trickling down grammar rules later on
                     self.start_symbol = non_terminal
                 else:
                     raise GrammarFileError("Start symbol improperly formed")
-
         return non_terminal
 
     def _consume_set_of_productions(self, file) -> List[str]:
@@ -89,7 +83,6 @@ class RandomTextGenerator:
             # the found productions
             elif line == "}":
                 return productions
-
             elif line == "{":
                 raise GrammarFileError("Error: Unexpected '{' found!")
             else:
