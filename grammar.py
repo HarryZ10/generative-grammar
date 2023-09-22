@@ -19,7 +19,10 @@ class RandomTextGenerator:
 
     @staticmethod
     def _minimize_text(text: str) -> str:
-        return text.replace(" ,", ",").replace(" .", ".").replace(" :", ":").replace(" \\n ", "\n")
+        # replace spaces before special characters and handle newlines
+        minimized_text = re.sub(r'\s([,!?.:\n])', r'\1', text)
+        minimized_text = re.sub(r'\\n', '\n', minimized_text)
+        return minimized_text
 
     def _read_grammar_rules(self) -> None:
         try:
