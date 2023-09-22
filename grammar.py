@@ -1,6 +1,7 @@
 import random
 import sys
 from typing import Dict, List
+import re
 
 class RandomTextGeneratorError(Exception):
     """Base exception for RandomTextGenerator."""
@@ -93,7 +94,7 @@ class RandomTextGenerator:
                     if removed_braces.endswith(";"):
                         # remove the last character (semicolon)
                         # and split the line into solo productions
-                        self._add_productions_from_line(removed_braces, productions)
+                        self._add_productions_from_line(removed_braces[:-1], productions)
                     return productions
 
         # if we are, it means we did not find a "}" mark
@@ -107,29 +108,19 @@ class RandomTextGenerator:
     def _get_content(self, non_terminal) -> List[str]:
         # retrieve the list of production rules associated with the given non-terminal symbol
         productions: List[str] = self.grammar_rules.get(non_terminal, [])
-        if productions:
-            production, symbols, symbol = random.choice(productions), [], ""
 
-            for char in production:
-                # "<" starting character for non-terminal symbol
-                if char == '<':
-                    # add it to the symbols list if symbol is found
-                    if symbol.strip():
-                        symbols.append(symbol.strip())
-                    # start building a new symbol starting with '<'
-                    symbol = '<'
-                # ">" starting character for non-terminal symbol
-                elif char == '>':
-                    symbol += '>'
-                    symbols.append(symbol)
-                    symbol = ""
-                # build the symbol inside the <> or using other punctuation
-                else:
-                    # add the character to the current symbol
-                    symbol += char
-            if symbol:
-                symbols.append(symbol.strip())
-            return symbols
+        # if there any any productions
+        if productions:
+
+            # then get a random one of them
+            production = random.choice(productions)
+
+            # get the non-terminal or terminal symbols
+            symbols = re.split(r'(?<=>)|(?=<)', production)
+
+            # return non-whitespace symbols
+            return [symbol.strip() for symbol in symbols if symbol.strip()]
+        return []
 
     def run(self) -> str:
         # initialize stack with entry symbol and output
