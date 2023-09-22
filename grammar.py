@@ -11,7 +11,6 @@ class GrammarFileError(RandomTextGeneratorError):
 class RandomTextGenerator:
 
     def __init__(self, grammar_file):
-
         self.grammar_file: str = grammar_file            # the file path to read from
         self.grammar_rules: Dict[str, List[str]] = {}    # store grammar rules in a map
         self.start_symbol: str = None                    # entry non-terminal symbol
