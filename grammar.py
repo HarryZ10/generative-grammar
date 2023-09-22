@@ -89,13 +89,11 @@ class RandomTextGenerator:
                     raise GrammarFileError("Error: '}' found but improperly formatted.")
 
                 elif line.endswith("}"):
-
                     removed_braces = line[:-1].strip()
                     if removed_braces.endswith(";"):
                         # remove the last character (semicolon)
                         # and split the line into solo productions
                         self._add_productions_from_line(removed_braces, productions)
-
                     return productions
 
         # if we are, it means we did not find a "}" mark
@@ -120,27 +118,22 @@ class RandomTextGenerator:
                         symbols.append(symbol.strip())
                     # start building a new symbol starting with '<'
                     symbol = '<'
-
                 # ">" starting character for non-terminal symbol
                 elif char == '>':
                     symbol += '>'
                     symbols.append(symbol)
                     symbol = ""
-
                 # build the symbol inside the <> or using other punctuation
                 else:
                     # add the character to the current symbol
                     symbol += char
-
             if symbol:
                 symbols.append(symbol.strip())
-
             return symbols
 
     def run(self) -> str:
         # initialize stack with entry symbol and output
         stack, res = [self.start_symbol], []
-
         while stack:
             # stack gets consumed to replace all non-terminal symbols
             curr_symbol: str = stack.pop()
@@ -149,7 +142,6 @@ class RandomTextGenerator:
             if curr_symbol in self.grammar_rules:
                 # replace non-terminal with new randomly selected terminal symbols
                 content: List[str] = self._get_content(curr_symbol)
-
                 if content is not None:
                     stack.extend(reversed(content))
                 else:
@@ -157,7 +149,6 @@ class RandomTextGenerator:
             else:
                 # only append terminal symbols
                 res.append(curr_symbol)
-
         return self._minimize_text(" ".join(res))
 
 if __name__ == "__main__":
