@@ -39,8 +39,12 @@ class RandomTextGenerator:
                 # collect all productions consuming the rest of the lines until "}" is found
                 productions: list = self._consume_set_of_productions(file) 
 
-                # add the non-terminal and its productions to the grammar rules dict
-                self.grammar_rules[non_terminal] = productions
+                if non_terminal:
+                    # add the non-terminal and its productions to the grammar rules dict
+                    self.grammar_rules[non_terminal] = productions
+                else:
+                    print("Start symbol improperly formatted")
+                    sys.exit(1)
 
             elif line == "}":
                 print("Error: Unexpected '}' bracket found outside a production set")
@@ -55,7 +59,6 @@ class RandomTextGenerator:
         if self.start_symbol is None:
             # set the start symbol to init
             # trickling down grammar rules later on
-
             if non_terminal and non_terminal != '':
 
                 if non_terminal.endswith(">") and non_terminal.startswith("<"):
