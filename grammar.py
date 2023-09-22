@@ -101,8 +101,8 @@ class RandomTextGenerator:
         # if we are, it means we did not find a "}" mark
         raise GrammarFileError("File corrupt EOF: No matching '}' found!  ")
 
-    def _add_productions_from_line(self, line: str, productions: List[str]) -> None:
-        multiple_prods = line[:-1].split(";")
+    def _add_productions_from_line(self, raw_line: str, productions: List[str]) -> None:
+        multiple_prods = raw_line.split(";")
         for prod in multiple_prods:
             productions.append(prod.strip())
 
