@@ -98,7 +98,12 @@ class RandomTextGenerator:
                         # remove the last character (semicolon)
                         # and split the line into solo productions
                         self._add_productions_from_line(removed_braces[:-1], productions)
-                    return productions
+                    else:
+                        raise GrammarFileError("No semicolon found")
+                else:
+                    raise GrammarFileError("No semicolon found")
+
+                return productions
 
         # if we are, it means we did not find a "}" mark
         raise GrammarFileError("File corrupt EOF: No matching '}' found!  ")
