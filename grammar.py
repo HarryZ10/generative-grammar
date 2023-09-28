@@ -121,10 +121,13 @@ class RandomTextGenerator:
         if productions:
 
             # then get a random one of them
-            production = random.choice(productions)
+            production: str = random.choice(productions)
 
-            # get the non-terminal or terminal symbols
-            symbols = re.split(r'(?<=>)|(?=<)', production)
+            # Lookbehind assertion: (?<=>) matches if word followed by '>'
+            # Lookahead assertion:  (?=<) matches if '<' is followed by a word
+            # We're combining this with the string potential with multiple non-terminals,
+            # to split on each symbol non-terminal or terminal into a list
+            symbols: List[str] = re.split(r'(?<=>)|(?=<)', production)
 
             # return non-whitespace symbols
             return [symbol.strip() for symbol in symbols if symbol.strip()]
