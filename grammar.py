@@ -37,39 +37,76 @@ class RandomTextGenerator:
         return minimized_text
 
     def _read_grammar_rules(self) -> None:
+        """
+        Reads grammar rules from a specified file. This method attempts
+        to read grammar rules from the file specified by `grammar_file`.
 
+        If the file is empty, cannot be decoded using UTF-8,
+        or does not exist, `GrammarFileError` is raised.
+
+        Raises:
+            GrammarFileError: If the file is empty, cannot be decoded using UTF-8,
+                              or does not exist.
+        """
         try:
-            # check for the size of the file being 0
+            # Check if the file size is 0 (i.e., the file is empty)
             empty = os.stat(self.grammar_file).st_size == 0
             if empty:
                 raise GrammarFileError("File is empty")
 
+            # Attempt to read the file with UTF-8 encoding
             with open(self.grammar_file, 'r', encoding='UTF-8') as file:
                 self._process_file(file)
 
         except UnicodeDecodeError:
+            # Handle cases where the file cannot be decoded using UTF-8
             raise GrammarFileError(
                 "Cannot read file encoding. Use default UTF-8.")
 
         except FileNotFoundError:
+            # Handle cases where the file does not exist
             raise GrammarFileError("File does not exist.")
 
     def _process_file(self, file) -> None:
+        """
+        Processes the given file to extract grammar rules. This method reads
+        the file line by line and expects the grammar rules to be formatted
+        in a specific way.
 
+        Each rule starts with a '{' on its own line, followed by the non-terminal
+        symbol on the next line. The subsequent lines contain the productions
+        for that non-terminal until a '}' is encountered.
+
+        The method also populates the `grammar_rules` dictionar
+        with the non-terminal as the key and its
+        corresponding productions as the value.
+
+        Example file format:
+            {
+            <non_terminal>
+            <production> ;
+            }
+
+        Raises:
+            GrammarFileError: If there's any inconsistency or error in the file's
+                            formatting
+        Args:
+            file (TextIO): The file object to be processed
+        """
         for line in file:
             line = line.strip()
 
             if line == "{":
-                # initialize start symbol to the current non-terminal
-                # non-terminal is on the next line
+                # Initialize the start symbol to the current non-terminal.
+                # The non-terminal is expected to be on the next line
                 non_terminal: str = self._validate_start_symbol(file)
 
-                # collect all productions consuming the rest of the lines until
-                # "}" is found
+                # Collect all productions, reading the subsequent lines until
+                # a "}" is found
                 productions: List[str] = self._consume_set_of_productions(file)
 
                 if non_terminal:
-                    # add the non-terminal and its productions to the grammar
+                    # Add the non-terminal and its productions to the grammar
                     # rules dict
                     self.grammar_rules[non_terminal] = productions
                 else:
@@ -83,6 +120,16 @@ class RandomTextGenerator:
                         "Error: Opening bracket '{' not formatted.")
 
     def _validate_start_symbol(self, file) -> str:
+        """
+        Validates and extracts the start symbol (non-terminal) from the given file
+
+        Raises:
+            GrammarFileError: If non-terminal symbol is not properly formed
+        Args:
+            file (TextIO): The file object from which the non-terminal is to be read
+        Returns:
+            str: The extracted non-terminal symbol
+        """
         non_terminal: str = file.readline().strip()
         if self.start_symbol is None:
             # set the start symbol to init
@@ -95,6 +142,18 @@ class RandomTextGenerator:
         return non_terminal
 
     def _consume_set_of_productions(self, file) -> List[str]:
+        """
+        Extracts and processes a set of productions from the given file.
+
+        Raises:
+            GrammarFileError: If there's any inconsistency or error in the file's
+                            formatting, such as missing semicolons, unexpected
+                            curly braces, or improperly formatted productions
+        Args:
+            file (TextIO): The file object from which the productions are to be read
+        Returns:
+            List[str]: A list of extracted productions
+        """
         productions: List[str] = []
 
         # going through each line in the remaining productions
@@ -139,11 +198,27 @@ class RandomTextGenerator:
 
     def _add_productions_from_line(
             self, raw_line: str, productions: List[str]) -> None:
+        """
+        Processes a raw line containing multiple productions and adds them to the provided list.
+
+        Args:
+            - raw_line (str): The raw line containing one or more productions separated by semicolons
+            - productions List[str]: The list to which the processed productions will be appended
+         """
         multiple_prods = raw_line.split(";")
         for prod in multiple_prods:
             productions.append(prod.strip())
 
     def _get_content(self, non_terminal) -> List[str]:
+        """
+        Retrieves a random production rule associated with the given non-terminal symbol
+
+        Args:
+            non_terminal (str): The non-terminal symbol
+        Returns:
+            List[str]: A list of symbols (both terminal and non-terminal) from the randomly
+                        selected production rule.
+        """
         # retrieve the list of production rules associated with the given
         # non-terminal symbol
         productions: List[str] = self.grammar_rules.get(non_terminal, [])
