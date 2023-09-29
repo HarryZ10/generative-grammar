@@ -240,9 +240,7 @@ class RandomTextGenerator:
                 # symbols
                 content: List[str] = self._get_content(curr_symbol)
 
-                # the content can be empty '' because a rule can just end with ";"
-                # without words preceding to denote an empty option
-                if content is not None:
+                if content:
                     stack.extend(reversed(content))
                 else:
                     raise RandomTextGeneratorError(
