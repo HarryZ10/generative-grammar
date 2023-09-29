@@ -1,21 +1,33 @@
 import random
 import sys
+import os
 from typing import Dict, List
 import re
+
 
 class RandomTextGeneratorError(Exception):
     """Base exception for RandomTextGenerator."""
 
+
 class GrammarFileError(RandomTextGeneratorError):
     """Raised when there's an issue with the grammar file."""
+
 
 class RandomTextGenerator:
 
     def __init__(self, grammar_file):
-        self.grammar_file: str = grammar_file            # the file path to read from
-        self.grammar_rules: Dict[str, List[str]] = {}    # store grammar rules in a map
-        self.start_symbol: str = None                    # entry non-terminal symbol
-        self._read_grammar_rules()                       # entrypoint to the program
+
+        # the file path to read from
+        self.grammar_file: str = grammar_file
+
+        # storing grammar rules in a dictionary
+        self.grammar_rules: Dict[str, List[str]] = {}
+
+        # entry non-terminal symbol
+        self.start_symbol: str = None
+
+        # program entrypoint on object instantiation
+        self._read_grammar_rules()
 
     @staticmethod
     def _minimize_text(text: str) -> str:
@@ -25,11 +37,20 @@ class RandomTextGenerator:
         return minimized_text
 
     def _read_grammar_rules(self) -> None:
+
         try:
+            # check for the size of the file being 0
+            empty = os.stat(self.grammar_file).st_size == 0
+            if empty:
+                raise GrammarFileError("File is empty")
+
             with open(self.grammar_file, 'r', encoding='UTF-8') as file:
                 self._process_file(file)
+
         except UnicodeDecodeError:
-            raise GrammarFileError("Cannot read file encoding. Use default UTF-8.")
+            raise GrammarFileError(
+                "Cannot read file encoding. Use default UTF-8.")
+
         except FileNotFoundError:
             raise GrammarFileError("File does not exist.")
 
@@ -43,19 +64,23 @@ class RandomTextGenerator:
                 # non-terminal is on the next line
                 non_terminal: str = self._validate_start_symbol(file)
 
-                # collect all productions consuming the rest of the lines until "}" is found
+                # collect all productions consuming the rest of the lines until
+                # "}" is found
                 productions: List[str] = self._consume_set_of_productions(file)
 
                 if non_terminal:
-                    # add the non-terminal and its productions to the grammar rules dict
+                    # add the non-terminal and its productions to the grammar
+                    # rules dict
                     self.grammar_rules[non_terminal] = productions
                 else:
                     raise GrammarFileError("Start symbol improperly formatted")
             elif line == "}":
-                raise GrammarFileError("Error: Unexpected '}' bracket found outside a production set")
+                raise GrammarFileError(
+                    "Error: Unexpected '}' bracket found outside a production set")
             else:
                 if line.startswith("{"):
-                    raise GrammarFileError("Error: Opening bracket '{' not formatted.")
+                    raise GrammarFileError(
+                        "Error: Opening bracket '{' not formatted.")
 
     def _validate_start_symbol(self, file) -> str:
         non_terminal: str = file.readline().strip()
@@ -90,31 +115,37 @@ class RandomTextGenerator:
                 raise GrammarFileError("Error: Unexpected '{' found!")
             else:
                 if line.startswith("}"):
-                    raise GrammarFileError("Error: '}' found but improperly formatted.")
+                    raise GrammarFileError(
+                        "Error: '}' found but improperly formatted.")
 
                 elif line.endswith("}"):
                     removed_braces = line[:-1].strip()
                     if removed_braces.endswith(";"):
                         # remove the last character (semicolon)
                         # and split the line into solo productions
-                        self._add_productions_from_line(removed_braces[:-1], productions)
+                        self._add_productions_from_line(
+                            removed_braces[:-1], productions)
                     else:
-                        raise GrammarFileError("No semicolon found")
+                        raise GrammarFileError(
+                            "Error: Improperly formatted semicolons")
                 else:
-                    raise GrammarFileError("No semicolon found")
+                    raise GrammarFileError(
+                        "Error: Improperly formatted semicolons or curly braces, or no rules")
 
                 return productions
 
         # if we are, it means we did not find a "}" mark
         raise GrammarFileError("File corrupt EOF: No matching '}' found!  ")
 
-    def _add_productions_from_line(self, raw_line: str, productions: List[str]) -> None:
+    def _add_productions_from_line(
+            self, raw_line: str, productions: List[str]) -> None:
         multiple_prods = raw_line.split(";")
         for prod in multiple_prods:
             productions.append(prod.strip())
 
     def _get_content(self, non_terminal) -> List[str]:
-        # retrieve the list of production rules associated with the given non-terminal symbol
+        # retrieve the list of production rules associated with the given
+        # non-terminal symbol
         productions: List[str] = self.grammar_rules.get(non_terminal, [])
 
         # if there any any productions
@@ -142,21 +173,40 @@ class RandomTextGenerator:
 
             # if current symbol is non-terinal, replace with a terminal symbol
             if curr_symbol in self.grammar_rules:
-                # replace non-terminal with new randomly selected terminal symbols
+
+                # replace non-terminal with new randomly selected terminal
+                # symbols
                 content: List[str] = self._get_content(curr_symbol)
+
+                # the content can be empty '' because a rule can just end with ";"
+                # without words preceding to denote an empty option
                 if content is not None:
                     stack.extend(reversed(content))
                 else:
-                    raise RandomTextGeneratorError(f"No productions found for {curr_symbol}")
+                    raise RandomTextGeneratorError(
+                        f"No productions found for {curr_symbol}")
             else:
-                # only append terminal symbols
-                res.append(curr_symbol)
+                # Before we build output, we check if it has
+                # the angle brackets
+                if not re.match(r'^<.*>$', curr_symbol):
+                    res.append(curr_symbol)
+                else:
+                    raise RandomTextGeneratorError(
+                        f"Error: No productions found for {curr_symbol}")
+
         return self._minimize_text(" ".join(res))
 
+
 if __name__ == "__main__":
+
     try:
-        rtg = RandomTextGenerator(sys.argv[1])
-        print(rtg.run())
+        # File must exist
+        if len(sys.argv) > 1:
+            rtg = RandomTextGenerator(sys.argv[1])
+            print(rtg.run())
+        else:
+            raise GrammarFileError("No file provided")
+
     except RandomTextGeneratorError as e:
         print(e)
         sys.exit(1)
