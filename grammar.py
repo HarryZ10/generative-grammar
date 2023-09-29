@@ -41,31 +41,18 @@ class RandomTextGenerator:
         Reads grammar rules from a specified file. This method attempts
         to read grammar rules from the file specified by `grammar_file`.
 
-        If the file is empty, cannot be decoded using UTF-8,
-        or does not exist, `GrammarFileError` is raised.
-
         Raises:
             GrammarFileError: If the file is empty, cannot be decoded using UTF-8,
                               or does not exist.
         """
-        try:
-            # Check if the file size is 0 (i.e., the file is empty)
-            empty = os.stat(self.grammar_file).st_size == 0
-            if empty:
-                raise GrammarFileError("File is empty")
+        # Check if the file size is 0 (i.e., the file is empty)
+        empty = os.stat(self.grammar_file).st_size == 0
+        if empty:
+            raise GrammarFileError("File is empty")
 
-            # Attempt to read the file with UTF-8 encoding
-            with open(self.grammar_file, 'r', encoding='UTF-8') as file:
-                self._process_file(file)
-
-        except UnicodeDecodeError:
-            # Handle cases where the file cannot be decoded using UTF-8
-            raise GrammarFileError(
-                "Cannot read file encoding. Use default UTF-8.")
-
-        except FileNotFoundError:
-            # Handle cases where the file does not exist
-            raise GrammarFileError("File does not exist.")
+        # Attempt to read the file with UTF-8 encoding
+        with open(self.grammar_file, 'r', encoding='UTF-8') as file:
+            self._process_file(file)
 
     def _process_file(self, file) -> None:
         """
@@ -281,6 +268,15 @@ if __name__ == "__main__":
             print(rtg.run())
         else:
             raise GrammarFileError("No file provided")
+
+    except UnicodeDecodeError:
+        print("Cannot read file encoding. Use default UTF-8.")
+        sys.exit(1)
+
+    except FileNotFoundError:
+        # Handle cases where the file does not exist
+        print("File does not exist.")
+        sys.exit(1)
 
     except RandomTextGeneratorError as e:
         print(e)
